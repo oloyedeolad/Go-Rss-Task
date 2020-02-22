@@ -1,14 +1,12 @@
 {
+	"rootPath": "rssfeed",
+	"heroku": {
+		"install" : [ "./..."],
+		"goVersion": "go1.13.7"
+	},
 	"comment": "",
 	"ignore": "test",
 	"package": [
-		{
-			"rootPath": "rssfeed",
-			"heroku": {
-				"install" : [ "./..." ],
-				"goVersion": "go1.6"
-			}
-		},
 		{
 			"checksumSHA1": "H8wo+NR5z+VRl0wqPYpVQfC06ks=",
 			"origin": "go.mongodb.org/mongo-driver/vendor/github.com/go-stack/stack",
