@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"task1/repositories"
+	"rssfeed/repositories"
 )
 
 type Topic struct {
 	Topic string `json:"topic" bson:"_id,omitempty"`
 }
 
-
-func SearchRssFeed(response http.ResponseWriter, request *http.Request)  {
+func SearchRssFeed(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	var searchText Topic
 
@@ -33,6 +32,3 @@ func SearchRssFeed(response http.ResponseWriter, request *http.Request)  {
 
 	json.NewEncoder(response).Encode(items)
 }
-
-
-

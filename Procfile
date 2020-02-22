@@ -1,1 +1,1 @@
-web: bin/rssfeed
+web: rssfeed

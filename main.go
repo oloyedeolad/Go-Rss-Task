@@ -7,11 +7,9 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"rssfeed/controllers"
 	rss "rssfeed/getnews"
-	"task1/controllers"
 )
-
-
 
 func main() {
 
@@ -20,7 +18,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/person", controllers.SearchRssFeed).Methods("POST")
 	go func() {
-		log.Println(http.ListenAndServe(GetPort(), nil))
+		log.Println(http.ListenAndServe(GetPort(), router))
 	}()
 
 	go rss.StartSpider(collection)
@@ -36,6 +34,6 @@ func GetPort() string {
 	if port == "" {
 		port = "4747"
 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
-		 	}
-		return ":" + port
 	}
+	return ":" + port
+}
