@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	spider "task1/getnews"
+	spider "rssfeed/getnews"
 )
 
 //The repository for the Rest API
@@ -16,6 +16,8 @@ type RssRepository interface {
 	Get(ID string, dest interface{}, query string) (rss.Item, error)
 }
 
+
+//The interface implementation for the repository
 func List( query string) ([]*rss.Item, error) {
 	var results []*rss.Item
 	collection := spider.ConnectDB()
@@ -53,6 +55,7 @@ func List( query string) ([]*rss.Item, error) {
 	return results,  nil
 }
 
+//method to get a single rssfeed
 func Get(ID string, dest interface{}, query string) (rss.Item, error) {
 	collection := spider.ConnectDB()
 	var result rss.Item;
