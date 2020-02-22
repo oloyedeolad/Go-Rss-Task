@@ -2,26 +2,23 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
-	"task1/controllers"
-	spider "task1/getnews"
+	rss "rssfeed/getnews"
 )
 
 
 
 func main() {
 
-	collection := spider.ConnectDB()
-	router := mux.NewRouter()
-	router.HandleFunc("/person", controllers.SearchRssFeed).Methods("POST")
+	collection := rss.ConnectDB()
+
 	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", router))
+		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
 
-	go spider.StartSpider(collection)
+	go rss.StartSpider(collection)
 	//http.ListenAndServe(":3000", nil)
 	go fmt.Println("I have gotten here")
 	select {}
