@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	rss "rssfeed/getnews"
+	"task1/controllers"
 )
 
 
@@ -14,8 +17,10 @@ func main() {
 
 	collection := rss.ConnectDB()
 
+	router := mux.NewRouter()
+	router.HandleFunc("/person", controllers.SearchRssFeed).Methods("POST")
 	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
+		log.Println(http.ListenAndServe(GetPort(), nil))
 	}()
 
 	go rss.StartSpider(collection)
@@ -24,3 +29,13 @@ func main() {
 	select {}
 
 }
+
+// Get the Port from the environment so we can run on Heroku
+func GetPort() string {
+	var port = os.Getenv("PORT") // Set a default port if there is nothing in the environment
+	if port == "" {
+		port = "4747"
+		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+		 	}
+		return ":" + port
+	}
