@@ -1,18 +1,11 @@
-package datapack
+package tests
 
 import (
 	"github.com/ungerik/go-rss"
 	rss2 "rssfeed/getnews"
+	"rssfeed/repositories"
 	"testing"
 )
-
-func TestConnectDB(t *testing.T) {
-	collection := ConnectDB()
-
-	if collection == nil {
-		t.Error("collection not available")
-	}
-}
 
 func TestSaveToDb(t *testing.T) {
 
@@ -20,10 +13,10 @@ func TestSaveToDb(t *testing.T) {
 	url := "http://rss.cnn.com/rss/edition_world.rss"
 
 	p, _ := rss2.GetRss(c, url)
-	collection := ConnectDB()
+
 	feeds := rss2.ReceiveFromChannel(p)
 
-	sv, _ := SaveToDb(feeds, collection)
+	sv, _ := repositories.SaveToDb(feeds)
 
 	if sv == nil {
 		t.Error("save failed")
@@ -36,10 +29,9 @@ func TestSaveToDbNoDuplicate(t *testing.T) {
 	url := "http://rss.cnn.com/rss/edition_world.rss"
 
 	p, _ := rss2.GetRss(c, url)
-	collection := ConnectDB()
 	feeds := rss2.ReceiveFromChannel(p)
 
-	_, err := SaveToDb(feeds, collection)
+	_, err := repositories.SaveToDb(feeds)
 
 	if err != nil {
 		t.Error("save failed")
