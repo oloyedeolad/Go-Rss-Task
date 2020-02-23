@@ -5,22 +5,28 @@ import (
 	"fmt"
 	"github.com/ungerik/go-rss"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	spider "rssfeed/getnews"
+	"rssfeed/datapack"
 )
 
 //The repository for the Rest API
 type RssRepository interface {
-	List( query string) ([]*rss.Item, error)
+	List(query string) ([]*rss.Item, error)
 	Get(ID string, dest interface{}, query string) (rss.Item, error)
+	SaveToDb() (*mongo.InsertManyResult, error)
 }
 
+var collection *mongo.Collection
+
+func init() {
+	collection = datapack.GetCollection()
+}
 
 //The interface implementation for the repository
-func List( query string) ([]*rss.Item, error) {
+func List(query string) ([]*rss.Item, error) {
 	var results []*rss.Item
-	collection := spider.ConnectDB()
 	fmt.Println(query)
 	searchQuery := bson.M{
 		"$text": bson.M{
@@ -32,12 +38,12 @@ func List( query string) ([]*rss.Item, error) {
 	findOptions.SetAllowPartialResults(true)
 	findOptions.SetProjection(bson.M{
 
-		"score":       bson.M{"$meta": "textScore"},
+		"score": bson.M{"$meta": "textScore"},
 	})
 	findOptions.SetSort(bson.M{"score": bson.M{"$meta": "textScore"}})
 	list, err := collection.Find(context.Background(), searchQuery, findOptions)
 	//defer list.Close(context.Background())
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	for list.Next(context.TODO()) {
@@ -52,18 +58,33 @@ func List( query string) ([]*rss.Item, error) {
 		results = append(results, &elem)
 	}
 	fmt.Println(results)
-	return results,  nil
+	return results, nil
 }
 
 //method to get a single rssfeed
-func Get(ID string, dest interface{}, query string) (rss.Item, error) {
-	collection := spider.ConnectDB()
-	var result rss.Item;
-	 err := collection.FindOne(context.Background(), ID).Decode(&result)
+func Get(ID string) (rss.Item, error) {
+
+	var result rss.Item
+	err := collection.FindOne(context.Background(), ID).Decode(&result)
 
 	if err != nil {
 		return result, err
 	}
 
-	 return result, nil
+	return result, nil
+}
+
+//Methods to save in the database
+func SaveToDb(feeds []interface{}) (*mongo.InsertManyResult, error) {
+
+	var opt options.InsertManyOptions
+	opt.SetOrdered(false)
+	insertManyResult, err := collection.InsertMany(context.Background(), feeds, &opt)
+
+	if err != nil {
+		/*fmt.Println(err)*/
+	}
+
+	return insertManyResult, nil
+	//fmt.Println("Inserted multiple documents: ", insertManyResult.InsertedIDs)
 }

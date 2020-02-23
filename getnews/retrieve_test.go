@@ -2,6 +2,7 @@ package rss
 
 import (
 	"github.com/ungerik/go-rss"
+	"rssfeed/datapack"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func TestGetRss(t *testing.T) {
 	}
 }
 
-func TestGetRssWrongUrl(t *testing.T)  {
+func TestGetRssWrongUrl(t *testing.T) {
 	c := make(chan rss.Channel, 100)
 	url := "cnn.com/rss/edition_world.rss"
 
@@ -37,7 +38,7 @@ func TestReceiveFromChannel(t *testing.T) {
 
 	feeds := ReceiveFromChannel(p)
 
-	if feeds == nil{
+	if feeds == nil {
 		t.Error("feeds returned empty")
 	}
 	if len(feeds) < 1 {
@@ -45,9 +46,8 @@ func TestReceiveFromChannel(t *testing.T) {
 	}
 }
 
-
 func TestSpider(t *testing.T) {
-	collection := ConnectDB()
+	collection := datapack.ConnectDB()
 	c := Spider(collection)
 
 	if !c {

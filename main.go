@@ -13,15 +13,13 @@ import (
 
 func main() {
 
-	collection := rss.ConnectDB()
-
 	router := mux.NewRouter()
 	router.HandleFunc("/search", controllers.SearchRssFeed).Methods("POST")
 	go func() {
 		log.Println(http.ListenAndServe(GetPort(), router))
 	}()
 
-	go rss.StartSpider(collection)
+	go rss.StartSpider()
 	//http.ListenAndServe(":3000", nil)
 	go fmt.Println("I have gotten here")
 	select {}
