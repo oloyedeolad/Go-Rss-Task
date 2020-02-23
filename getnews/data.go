@@ -30,7 +30,7 @@ func ConnectDB() *mongo.Collection {
 
 	fmt.Println("Connected to MongoDB!")
 
-	collection := client.Database("Feeds").Collection("Items")
+	collection := client.Database("Feeds").Collection("News")
 
 	//create text index
 	opt := options.Index()
@@ -43,7 +43,6 @@ func ConnectDB() *mongo.Collection {
 	index := mongo.IndexModel{Keys: bson.M{
 		"title":       "text",
 		"description": "text",
-		"body":        "text",
 	}, Options: opt}
 	if _, err := collection.Indexes().CreateOne(context.Background(), index); err != nil {
 		log.Println("Could not create text index:", err)
