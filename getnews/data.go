@@ -11,7 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
 //This is the method for connecting to the mongodb database
 func ConnectDB() *mongo.Collection {
 	// Set client options
@@ -37,7 +36,7 @@ func ConnectDB() *mongo.Collection {
 	opt := options.Index()
 	opt.SetUnique(true)
 	index := mongo.IndexModel{
-			Keys: bsonx.Doc{{Key: "title", Value: bsonx.String("text")}},
+		Keys: bsonx.Doc{{Key: "title", Value: bsonx.String("text")}},
 
 		Options: opt,
 	}
@@ -46,22 +45,18 @@ func ConnectDB() *mongo.Collection {
 
 	_, err = collection.Indexes().CreateOne(context.Background(), index, opts)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
 	}
 	return collection
 
 }
 
-
-
 //This method saves the received news into th database and also prevent duplication
-func SaveToDb(feeds []interface{}, collection *mongo.Collection) (*mongo.InsertManyResult,error) {
-
+func SaveToDb(feeds []interface{}, collection *mongo.Collection) (*mongo.InsertManyResult, error) {
 
 	var opt options.InsertManyOptions
 	opt.SetOrdered(false)
 	insertManyResult, err := collection.InsertMany(context.Background(), feeds, &opt)
-
 
 	if err != nil {
 		/*fmt.Println(err)*/
