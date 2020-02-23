@@ -14,14 +14,15 @@ import (
 func main() {
 
 	router := mux.NewRouter()
+	router.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
 	router.HandleFunc("/search", controllers.SearchRssFeed).Methods("POST")
 	go func() {
 		log.Println(http.ListenAndServe(GetPort(), router))
 	}()
 
 	go rss.StartSpider()
-	//http.ListenAndServe(":3000", nil)
-	go fmt.Println("I have gotten here")
+
+	// This meant to allow the program run forever
 	select {}
 
 }

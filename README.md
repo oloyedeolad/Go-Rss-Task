@@ -39,3 +39,7 @@ to continue after the error
 ### Tests
 All tests are placed in a different package called tests.
 to run test use go test -v -coverpkg ./... ./...
+
+
+### Route
+The route for the search is "/search"
