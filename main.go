@@ -16,7 +16,7 @@ func main() {
 	collection := rss.ConnectDB()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/feeds", controllers.SearchRssFeed).Methods("POST")
+	router.HandleFunc("/search", controllers.SearchRssFeed).Methods("POST")
 	go func() {
 		log.Println(http.ListenAndServe(GetPort(), router))
 	}()

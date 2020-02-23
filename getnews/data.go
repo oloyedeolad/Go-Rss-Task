@@ -3,12 +3,10 @@ package rss
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/x/bsonx"
-	"log"
-	"time"
-
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 //This is the method for connecting to the mongodb database
@@ -33,19 +31,22 @@ func ConnectDB() *mongo.Collection {
 	fmt.Println("Connected to MongoDB!")
 
 	collection := client.Database("Feeds").Collection("Items")
+
+	//create text index
 	opt := options.Index()
 	opt.SetUnique(true)
-	index := mongo.IndexModel{
-		Keys: bsonx.Doc{{Key: "title", Value: bsonx.String("text")}},
+	opt.SetWeights(bson.M{
+		"title":       5, // Word matches in the title are weighted 5× standard.
+		"description": 2,
+	})
 
-		Options: opt,
-	}
-
-	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
-
-	_, err = collection.Indexes().CreateOne(context.Background(), index, opts)
-	if err != nil {
-		log.Println(err.Error())
+	index := mongo.IndexModel{Keys: bson.M{
+		"title":       "text",
+		"description": "text",
+		"body":        "text",
+	}, Options: opt}
+	if _, err := collection.Indexes().CreateOne(context.Background(), index); err != nil {
+		log.Println("Could not create text index:", err)
 	}
 	return collection
 
