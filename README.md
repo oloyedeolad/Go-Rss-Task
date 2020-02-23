@@ -34,3 +34,8 @@ This is the method responsible for connecting the system to the database. A mong
 #### SaveToDb()
 Saving into the database is done in this method. An unordered form of saving is used in other to allow the check on duplicated and allow the procedure
 to continue after the error
+
+
+### Tests
+All tests are placed in a different package called tests.
+to run test use go test -v -coverpkg ./... ./...

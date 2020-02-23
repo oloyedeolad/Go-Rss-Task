@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"rssfeed/repositories"
 )
@@ -21,7 +20,7 @@ func SearchRssFeed(response http.ResponseWriter, request *http.Request) {
 		response.Write([]byte(`{ "message": "` + "Ensure your request has a topic" + `" }`))
 		return
 	}
-	fmt.Println("I am here" + searchText.Topic)
+
 	items, err := repositories.List(searchText.Topic)
 
 	if err != nil {
