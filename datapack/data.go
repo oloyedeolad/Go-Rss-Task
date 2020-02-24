@@ -11,7 +11,8 @@ import (
 
 //This is the method for connecting to the mongodb database
 func ConnectDB() *mongo.Client {
-	// Set client options
+	/*Set client options
+	Note: In a production environmnet the url will not be placed here*/
 	clientOptions := options.Client().ApplyURI("mongodb+srv://feed:CvlSll83tNW5vpVD@cluster0-5nktq.mongodb.net/test?retryWrites=true&w=majority")
 	clientOptions = clientOptions.SetMaxPoolSize(50)
 	// Connect to MongoDB
@@ -34,6 +35,7 @@ func ConnectDB() *mongo.Client {
 
 }
 
+// get the mongodb collection
 func GetCollection() *mongo.Collection {
 	collection := ConnectDB().Database("Feeds").Collection("News")
 

@@ -16,10 +16,13 @@ func main() {
 	router := mux.NewRouter()
 	router.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
 	router.HandleFunc("/search", controllers.SearchRssFeed).Methods("POST")
+
+	// Starting a routine for the server
 	go func() {
 		log.Println(http.ListenAndServe(GetPort(), router))
 	}()
 
+	// Starting a routine for regular fetching of the program
 	go rss.StartSpider()
 
 	// This meant to allow the program run forever

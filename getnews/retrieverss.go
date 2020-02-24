@@ -15,7 +15,7 @@ func GetRss(c chan rss.Channel, url string) (chan rss.Channel, error) {
 		return nil, err
 	}
 
-	fmt.Println(channel.Title)
+	fmt.Println("I have received from: " + channel.Title)
 
 	c <- *channel
 	return c, err
@@ -25,34 +25,28 @@ func GetRss(c chan rss.Channel, url string) (chan rss.Channel, error) {
 func ReceiveFromChannel(c <-chan rss.Channel) []interface{} {
 
 	channel := <-c
-	/*for _, item := range channel.Item {
-		fmt.Println(item.Title)
-		fmt.Println(item.Link)
-		fmt.Println(item.PubDate)
-		fmt.Println(item.Description)
-	}
-	*/
-
+	//creating an interface for saving in database
 	feeds := make([]interface{}, len(channel.Item))
 	for i, v := range channel.Item {
 		feeds[i] = v
 	}
 
 	return feeds
-	/*SaveToDb(channel, collection)
 
-	return nil*/
 }
 
-// This function merges the GetNews and Receive together allowing the to flow
+// This function uses the GetNew and Receive from channel to loop through the urls
 func Spider() bool {
 
 	var err1 error
 	c := make(chan rss.Channel, 100)
+
 	urls := []string{
 		"http://rss.cnn.com/rss/edition_world.rss",
 		"http://feeds.bbci.co.uk/news/world/rss.xml",
 	}
+
+	// Loop for getting feeds, passing to receive  and saving in database
 	for i := 0; i < len(urls); i++ {
 		GetRss(c, urls[i])
 		feed := ReceiveFromChannel(c)
@@ -64,9 +58,6 @@ func Spider() bool {
 	if err1 != nil {
 		return false
 	}
-
-	//GetRss(c, urls[1])
-	//ReceiveFromChannel(c)
 
 	return true
 }

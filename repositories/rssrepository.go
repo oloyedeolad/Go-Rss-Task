@@ -14,7 +14,6 @@ import (
 //The repository for the Rest API
 type RssRepository interface {
 	List(query string) ([]*rss.Item, error)
-	Get(ID string, dest interface{}, query string) (rss.Item, error)
 	SaveToDb() (*mongo.InsertManyResult, error)
 }
 
@@ -27,7 +26,6 @@ func init() {
 //The interface implementation for the repository
 func List(query string) ([]*rss.Item, error) {
 	var results []*rss.Item
-	fmt.Println(query)
 	searchQuery := bson.M{
 		"$text": bson.M{
 			"$search": query,
@@ -42,7 +40,6 @@ func List(query string) ([]*rss.Item, error) {
 	})
 	findOptions.SetSort(bson.M{"score": bson.M{"$meta": "textScore"}})
 	list, err := collection.Find(context.Background(), searchQuery, findOptions)
-	//defer list.Close(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -61,19 +58,6 @@ func List(query string) ([]*rss.Item, error) {
 	return results, nil
 }
 
-//method to get a single rssfeed
-func Get(ID string) (rss.Item, error) {
-
-	var result rss.Item
-	err := collection.FindOne(context.Background(), ID).Decode(&result)
-
-	if err != nil {
-		return result, err
-	}
-
-	return result, nil
-}
-
 //Methods to save in the database
 func SaveToDb(feeds []interface{}) (*mongo.InsertManyResult, error) {
 
@@ -86,5 +70,5 @@ func SaveToDb(feeds []interface{}) (*mongo.InsertManyResult, error) {
 	}
 
 	return insertManyResult, nil
-	//fmt.Println("Inserted multiple documents: ", insertManyResult.InsertedIDs)
+
 }
