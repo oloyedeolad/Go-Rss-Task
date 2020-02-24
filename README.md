@@ -44,3 +44,9 @@ to run test use go test -v -coverpkg ./... ./...
 ### Route
 The route for the search is "/search"
 The project runs on heroku on this route: https://desolate-bastion-48049.herokuapp.com
+
+### Sample post
+Method: POST
+{
+	"topic" : "US"
+}
